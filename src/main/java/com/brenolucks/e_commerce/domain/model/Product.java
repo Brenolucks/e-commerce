@@ -21,7 +21,10 @@ public class Product {
     private String description;
     private BigDecimal price;
     private int quantity;
+    @Enumerated(EnumType.STRING)
     private ProductCategory productCategory;
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
     //private String imageUrl;
 }

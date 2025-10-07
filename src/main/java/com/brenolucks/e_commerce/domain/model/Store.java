@@ -17,8 +17,11 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "address_id", nullable = false)
     private Address Address;
     private String phoneNumber;
     private String email;
+    @OneToMany(mappedBy = "store")
     private List<Product> products;
 }

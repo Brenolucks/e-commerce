@@ -1,4 +1,4 @@
-package com.brenolucks.e_commerce.domain.dto;
+package com.brenolucks.e_commerce.domain.dto.product;
 
 import com.brenolucks.e_commerce.domain.enums.ProductCategory;
 import com.brenolucks.e_commerce.domain.model.Store;
