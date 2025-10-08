@@ -14,17 +14,16 @@ public class ProductMapper {
         product.setPrice(productRequest.price());
         product.setQuantity(productRequest.quantity());
         product.setProductCategory(productRequest.productCategory());
-        product.setStore(productRequest.store());
         return product;
     }
 
     public ProductRequest toProductRequest(Product product) {
         return new ProductRequest(product.getName(), product.getDescription(),
-                product.getPrice(), product.getQuantity(), product.getProductCategory(), product.getStore());
+                product.getPrice(), product.getQuantity(), product.getProductCategory());
     }
 
     public ProductResponse toProductResponse(Product product) {
         return new ProductResponse(product.getName(), product.getDescription(),
-                product.getPrice(), product.getQuantity(), product.getProductCategory(), product.getStore());
+                product.getPrice(), product.getQuantity(), product.getProductCategory());
     }
 }

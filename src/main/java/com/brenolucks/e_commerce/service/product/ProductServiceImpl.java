@@ -1,12 +1,16 @@
 package com.brenolucks.e_commerce.service.product;
 
 import com.brenolucks.e_commerce.domain.dto.product.ProductRequest;
+import com.brenolucks.e_commerce.domain.dto.product.ProductRequestUpdate;
 import com.brenolucks.e_commerce.domain.dto.product.ProductResponse;
 import com.brenolucks.e_commerce.domain.mapper.product.ProductMapper;
 import com.brenolucks.e_commerce.exceptions.product.ProductExist;
 import com.brenolucks.e_commerce.exceptions.product.ProductNotFound;
 import com.brenolucks.e_commerce.repository.Product.ProductRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -20,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
     
     @Override
     public ProductResponse registerProduct(ProductRequest productRequest) {
-        productRepository.findProductByNameAndStore_Id(productRequest.name(), productRequest.store().getId())
+        productRepository.findProductByName(productRequest.name())
                 .ifPresent(p -> { throw new ProductExist("Product already exists!"); });
 
         var product = productMapper.toEntity(productRequest);
@@ -28,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse updateProduct(ProductRequest productRequest, Long productId) {
+    public ProductResponse updateProduct(ProductRequestUpdate productRequest, Long productId) {
         var product = productRepository.findProductById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product not found!"));
 
@@ -38,8 +42,33 @@ public class ProductServiceImpl implements ProductService {
         if (productRequest.price() != null) product.setPrice(productRequest.price());
         if (productRequest.quantity() != 0) product.setQuantity(productRequest.quantity());
         if (productRequest.productCategory() != null) product.setProductCategory(productRequest.productCategory());
-        if (productRequest.store() != null) product.setStore(productRequest.store());
 
         return productMapper.toProductResponse(productRepository.save(product));
+    }
+
+    @Override
+    public String deleteProduct(Long productId) {
+        var product = productRepository.findProductById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product not found!"));
+
+        productRepository.deleteById(product.getId());
+        return String.format("Product: %, deleted with success!", productId);
+    }
+
+    @Override
+    public List<ProductResponse> listAllProducts() {
+        var products = productRepository.findAll();
+        return products
+                .stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductResponse listProductById(Long productId) {
+        var product = productRepository.findProductById(productId)
+                .orElseThrow(() -> new ProductNotFound("Product not found!"));
+
+        return productMapper.toProductResponse(product);
     }
 }

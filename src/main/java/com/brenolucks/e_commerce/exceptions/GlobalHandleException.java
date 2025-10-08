@@ -24,7 +24,7 @@ public class GlobalHandleException {
     @ExceptionHandler(ProductNotFound.class)
     public ResponseEntity<ProductException> handleProductExistException(ProductNotFound e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProductException(
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.NOT_FOUND,
                 e.getMessage(),
                 LocalDateTime.now()
         ));
