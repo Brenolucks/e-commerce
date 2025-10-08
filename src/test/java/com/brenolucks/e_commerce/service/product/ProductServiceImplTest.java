@@ -1,6 +1,7 @@
 package com.brenolucks.e_commerce.service.product;
 
 import com.brenolucks.e_commerce.domain.dto.product.ProductRequest;
+import com.brenolucks.e_commerce.domain.dto.product.ProductResponse;
 import com.brenolucks.e_commerce.domain.enums.ProductCategory;
 import com.brenolucks.e_commerce.domain.mapper.product.ProductMapper;
 import com.brenolucks.e_commerce.domain.model.Product;
@@ -55,6 +56,9 @@ class ProductServiceImplTest {
 
         when(productMapper.toEntity(request)).thenReturn(product);
         when(productRepository.save(product)).thenReturn(product);
+        when(productMapper.toProductResponse(product)).thenReturn(new ProductResponse(product.getName(),
+                product.getDescription(), product.getPrice(), product.getQuantity(), product.getProductCategory(),
+                product.getStore()));
 
         productServiceImpl.registerProduct(request);
 
@@ -68,10 +72,38 @@ class ProductServiceImplTest {
         var request = new ProductRequest("Samsung S25 Ultra", "Test description", new BigDecimal(6700),
                 100, ProductCategory.ELETRONICS, store);
 
-        when(productRepository.findProductByNameAndStore_Id(request.name(), request.store().getId())).thenReturn(Optional.ofNullable(product));
+        when(productRepository.findProductByNameAndStore_Id(request.name(), request.store().getId())).thenReturn(Optional.of(product));
 
         assertThrows(RuntimeException.class, () -> productServiceImpl.registerProduct(request));
 
         verify(productRepository, times(1)).findProductByNameAndStore_Id(request.name(), request.store().getId());
     }
+
+    @Test
+    void shouldUpdateProductWithSuccess() {
+        var request = new ProductRequest("Samsung S25 Ultra", "Test description", new BigDecimal(6700),
+                100, ProductCategory.ELETRONICS, store);
+
+        when(productRepository.findProductById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+        when(productMapper.toProductResponse(any(Product.class))).thenReturn(null);
+
+        productServiceImpl.updateProduct(request, 1L);
+
+        verify(productRepository, times(1)).findProductById(1L);
+        verify(productRepository, times(1)).save(any(Product.class));
+        verify(productMapper, times(1)).toProductResponse(any(Product.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenProductNotFound() {
+        var request = new ProductRequest("Samsung S25 Ultra", "Test description", new BigDecimal(6700),
+                100, ProductCategory.ELETRONICS, store);
+
+        when(productRepository.findProductById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> productServiceImpl.updateProduct(request, anyLong()));
+        verify(productRepository, times(1)).findProductById(anyLong());
+    }
+
+    //TODO implements a test for every if in update method
 }

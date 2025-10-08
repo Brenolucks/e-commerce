@@ -5,4 +5,5 @@ import com.brenolucks.e_commerce.domain.dto.product.ProductResponse;
 
 public interface ProductService {
     ProductResponse registerProduct(ProductRequest productRequest);
+    ProductResponse updateProduct(ProductRequest productRequest, Long productId);
 }
