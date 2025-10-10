@@ -1,6 +1,7 @@
 package com.brenolucks.e_commerce.domain.model;
 
 import com.brenolucks.e_commerce.domain.enums.ProductCategory;
+import com.brenolucks.e_commerce.domain.enums.ProductType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,8 @@ public class Product {
     private String description;
     private BigDecimal price;
     private int quantity;
+    @Enumerated(EnumType.STRING)
+    private ProductType productType;
     @Enumerated(EnumType.STRING)
     private ProductCategory productCategory;
     //private String imageUrl;

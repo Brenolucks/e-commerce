@@ -3,12 +3,16 @@ package com.brenolucks.e_commerce.service.product;
 import com.brenolucks.e_commerce.domain.dto.product.ProductRequest;
 import com.brenolucks.e_commerce.domain.dto.product.ProductRequestUpdate;
 import com.brenolucks.e_commerce.domain.dto.product.ProductResponse;
+import com.brenolucks.e_commerce.domain.enums.ProductCategory;
+import com.brenolucks.e_commerce.domain.enums.ProductType;
 import com.brenolucks.e_commerce.domain.mapper.product.ProductMapper;
 import com.brenolucks.e_commerce.exceptions.product.ProductExist;
 import com.brenolucks.e_commerce.exceptions.product.ProductNotFound;
 import com.brenolucks.e_commerce.repository.Product.ProductRepository;
+import com.brenolucks.e_commerce.utils.product.ProductUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,10 +20,13 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final ProductUtils productUtils;
 
-    public ProductServiceImpl(ProductMapper productMapper, ProductRepository productRepository) {
+    public ProductServiceImpl(ProductMapper productMapper, ProductRepository productRepository,
+                              ProductUtils productUtils) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
+        this.productUtils = productUtils;
     }
     
     @Override
@@ -28,6 +35,10 @@ public class ProductServiceImpl implements ProductService {
                 .ifPresent(p -> { throw new ProductExist("Product already exists!"); });
 
         var product = productMapper.toEntity(productRequest);
+        productUtils.createProductCategoryStrategyMap()
+                .get(productRequest.productType())
+                .setCategoryBasedOnType(product, product.getProductType());
+
         return productMapper.toProductResponse(productRepository.save(product));
     }
 

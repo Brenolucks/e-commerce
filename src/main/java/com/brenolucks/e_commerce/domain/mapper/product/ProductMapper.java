@@ -13,17 +13,17 @@ public class ProductMapper {
         product.setDescription(productRequest.description());
         product.setPrice(productRequest.price());
         product.setQuantity(productRequest.quantity());
-        product.setProductCategory(productRequest.productCategory());
+        product.setProductType(productRequest.productType());
         return product;
     }
 
     public ProductRequest toProductRequest(Product product) {
         return new ProductRequest(product.getName(), product.getDescription(),
-                product.getPrice(), product.getQuantity(), product.getProductCategory());
+                product.getPrice(), product.getQuantity(), product.getProductType());
     }
 
     public ProductResponse toProductResponse(Product product) {
         return new ProductResponse(product.getName(), product.getDescription(),
-                product.getPrice(), product.getQuantity(), product.getProductCategory());
+                product.getPrice(), product.getQuantity(), product.getProductType(), product.getProductCategory());
     }
 }
