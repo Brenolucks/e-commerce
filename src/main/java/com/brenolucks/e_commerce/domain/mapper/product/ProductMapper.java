@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component()
 public class ProductMapper {
     public Product toEntity(ProductRequest productRequest) {
-        var product = new Product();
-        product.setName(productRequest.name());
-        product.setDescription(productRequest.description());
-        product.setPrice(productRequest.price());
-        product.setQuantity(productRequest.quantity());
-        product.setProductType(productRequest.productType());
-        return product;
+        return Product.builder()
+                .name(productRequest.name())
+                .description(productRequest.description())
+                .price(productRequest.price())
+                .quantity(productRequest.quantity())
+                .productType(productRequest.productType())
+                .build();
     }
 
     public ProductRequest toProductRequest(Product product) {

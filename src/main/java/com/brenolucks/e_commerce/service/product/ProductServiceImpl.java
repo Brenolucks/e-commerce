@@ -3,16 +3,14 @@ package com.brenolucks.e_commerce.service.product;
 import com.brenolucks.e_commerce.domain.dto.product.ProductRequest;
 import com.brenolucks.e_commerce.domain.dto.product.ProductRequestUpdate;
 import com.brenolucks.e_commerce.domain.dto.product.ProductResponse;
-import com.brenolucks.e_commerce.domain.enums.ProductCategory;
-import com.brenolucks.e_commerce.domain.enums.ProductType;
 import com.brenolucks.e_commerce.domain.mapper.product.ProductMapper;
+import com.brenolucks.e_commerce.domain.model.Product;
 import com.brenolucks.e_commerce.exceptions.product.ProductExist;
 import com.brenolucks.e_commerce.exceptions.product.ProductNotFound;
 import com.brenolucks.e_commerce.repository.Product.ProductRepository;
 import com.brenolucks.e_commerce.utils.product.ProductUtils;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,14 +44,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse updateProduct(ProductRequestUpdate productRequest, Long productId) {
         var product = productRepository.findProductById(productId)
                 .orElseThrow(() -> new ProductNotFound("Product not found!"));
-
-        //implement test for this ifs
-        if (productRequest.name() != null) product.setName(productRequest.name());
-        if (productRequest.description() != null) product.setDescription(productRequest.description());
-        if (productRequest.price() != null) product.setPrice(productRequest.price());
-        if (productRequest.quantity() != 0) product.setQuantity(productRequest.quantity());
-        if (productRequest.productCategory() != null) product.setProductCategory(productRequest.productCategory());
-
+        product.updateFrom(productRequest);
         return productMapper.toProductResponse(productRepository.save(product));
     }
 
